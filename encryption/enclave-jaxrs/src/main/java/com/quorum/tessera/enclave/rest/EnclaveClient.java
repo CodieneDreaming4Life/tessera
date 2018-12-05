@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import javax.json.*;
@@ -25,9 +24,9 @@ public class EnclaveClient implements Enclave {
 
     private final URI uri;
 
-    public EnclaveClient(URI uri) {
+    public EnclaveClient(Client client,URI uri) {
+        this.client = Objects.requireNonNull(client);
         this.uri = Objects.requireNonNull(uri);
-        this.client = ClientBuilder.newClient();
     }
 
     @Override

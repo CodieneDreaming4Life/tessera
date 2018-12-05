@@ -10,11 +10,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import javax.ws.rs.core.Application;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.TestProperties;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,25 +33,11 @@ public class EnclaveClientTest {
     public void setUp() throws Exception {
         enclave = mock(Enclave.class);
 
-        jersey = new JerseyTest() {
-            @Override
-            protected Application configure() {
-
-                enable(TestProperties.LOG_TRAFFIC);
-                enable(TestProperties.DUMP_ENTITY);
-
-                EnclaveApplication application = new EnclaveApplication(new EnclaveResource(enclave));
-
-                ResourceConfig config = ResourceConfig.forApplication(application);
-                config.packages("com.quorum.tessera.enclave.rest");
-                return config;
-            }
-
-        };
+        jersey = Util.create(enclave);
 
         jersey.setUp();
 
-        enclaveClient = new EnclaveClient(jersey.target().getUri());
+        enclaveClient = new EnclaveClient(jersey.client(),jersey.target().getUri());
 
     }
 
@@ -117,7 +100,7 @@ public class EnclaveClientTest {
         PublicKey senderPublicKey = PublicKey.from("PublicKey".getBytes());
         List<PublicKey> recipientPublicKeys = Arrays.asList(PublicKey.from("RecipientPublicKey".getBytes()));
 
-        EncodedPayloadWithRecipients encodedPayload = EnclaveApplicationTest.createSample();
+        EncodedPayloadWithRecipients encodedPayload = Fixtures.createSample();
 
         when(enclave.encryptPayload(message, senderPublicKey, recipientPublicKeys))
                 .thenReturn(encodedPayload);
@@ -150,7 +133,7 @@ public class EnclaveClientTest {
 
         RawTransaction rawTransaction = new RawTransaction(message, encryptedKey, nonce, senderPublicKey);
 
-        EncodedPayloadWithRecipients encodedPayload = EnclaveApplicationTest.createSample();
+        EncodedPayloadWithRecipients encodedPayload = Fixtures.createSample();
 
         when(enclave.encryptPayload(any(RawTransaction.class), any(List.class)))
                 .thenReturn(encodedPayload);
@@ -195,7 +178,7 @@ public class EnclaveClientTest {
     @Test
     public void unencryptTransaction() throws Exception {
         
-        EncodedPayloadWithRecipients payloadWithRecipients = EnclaveApplicationTest.createSample();
+        EncodedPayloadWithRecipients payloadWithRecipients = Fixtures.createSample();
         
         PublicKey providedKey = PublicKey.from("ProvidedKey".getBytes());
 
@@ -212,9 +195,5 @@ public class EnclaveClientTest {
                 .unencryptTransaction(any(EncodedPayloadWithRecipients.class),any(PublicKey.class));
         
     }
-    
-//
-//    public byte[] unencryptTransaction(EncodedPayloadWithRecipients payloadWithRecipients, PublicKey providedKey) {
-//        return enclave.unencryptTransaction(payloadWithRecipients, providedKey);
-//    }
+
 }
