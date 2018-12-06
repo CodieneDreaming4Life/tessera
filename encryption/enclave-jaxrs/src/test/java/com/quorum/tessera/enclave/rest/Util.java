@@ -1,4 +1,3 @@
-
 package com.quorum.tessera.enclave.rest;
 
 import com.quorum.tessera.encryption.Enclave;
@@ -7,10 +6,9 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 
-
 public class Util {
-    
-   public  static JerseyTest create(Enclave enclave) {
+
+    public static JerseyTest create(Enclave enclave) {
         return new JerseyTest() {
             @Override
             protected Application configure() {
