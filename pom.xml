@@ -454,6 +454,12 @@
 
             <dependency>
                 <groupId>com.quorum.tessera</groupId>
+                <artifactId>hashicorp-key-vault</artifactId>
+                <version>0.8-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.quorum.tessera</groupId>
                 <artifactId>key-generation</artifactId>
                 <version>0.8-SNAPSHOT</version>
             </dependency>
@@ -529,6 +535,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
                 <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.bettercloud</groupId>
+                <artifactId>vault-java-driver</artifactId>
+                <version>3.1.0</version>
             </dependency>
 
             <dependency>

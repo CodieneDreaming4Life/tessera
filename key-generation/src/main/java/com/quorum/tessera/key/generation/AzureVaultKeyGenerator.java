@@ -2,6 +2,8 @@ package com.quorum.tessera.key.generation;
 
 import com.quorum.tessera.config.ArgonOptions;
 import com.quorum.tessera.config.keypairs.AzureVaultKeyPair;
+import com.quorum.tessera.config.vault.data.AzureSetSecretData;
+import com.quorum.tessera.config.vault.data.SetSecretData;
 import com.quorum.tessera.encryption.Key;
 import com.quorum.tessera.encryption.KeyPair;
 import com.quorum.tessera.key.vault.KeyVaultService;
@@ -55,7 +57,9 @@ public class AzureVaultKeyGenerator implements KeyGenerator {
     }
 
     private void saveKeyInVault(String id, Key key) {
-        keyVaultService.setSecret(id, key.encodeToBase64());
+        SetSecretData setSecretData = new AzureSetSecretData(id, key.encodeToBase64());
+
+        keyVaultService.setSecret(setSecretData);
         LOGGER.debug("Key {} saved to vault with id {}", key.encodeToBase64(), id);
         LOGGER.info("Key saved to vault with id {}", id);
     }
