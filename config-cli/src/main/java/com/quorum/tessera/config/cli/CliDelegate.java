@@ -29,7 +29,8 @@ public enum CliDelegate {
         if (argsList.contains("admin")) {
             cliAdapter = new AdminCliAdapter(new ClientFactory());
         } else {
-            cliAdapter = ServiceLoaderUtil.load(CliAdapter.class)
+            
+            cliAdapter = ServiceLoaderUtil.load(CliAdapter.class,DefaultCliAdapter.class)
                     .orElse(new DefaultCliAdapter());
         }
 

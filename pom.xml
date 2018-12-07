@@ -471,6 +471,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.quorum.tessera</groupId>
+                <artifactId>enclave-jaxrs</artifactId>
+                <version>0.8-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.glassfish.jersey</groupId>
                 <artifactId>jersey-bom</artifactId>
                 <version>${jersey.version}</version>

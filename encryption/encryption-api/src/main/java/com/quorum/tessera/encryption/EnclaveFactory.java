@@ -1,18 +1,15 @@
 
 package com.quorum.tessera.encryption;
 
-import com.quorum.tessera.nacl.NaclFacadeFactory;
-import java.util.Collection;
+import java.util.ServiceLoader;
 
 
-public interface EnclaveFactory {
+public interface EnclaveFactory<C> {
     
-    default Enclave create(Collection<KeyPair> keys, Collection<PublicKey> forwardKeys) {
-        return new EnclaveImpl(NaclFacadeFactory.newFactory().create(), new KeyManagerImpl(keys, forwardKeys));
-    }
+    Enclave create(C config);
     
     static EnclaveFactory create() {
-        return new EnclaveFactory() {};
+        return ServiceLoader.load(EnclaveFactory.class).iterator().next();
     }
-    
+
 }
