@@ -8,10 +8,14 @@ import com.quorum.tessera.service.locator.ServiceLocator;
 import java.util.Set;
 import com.quorum.tessera.server.TesseraServerFactory;
 import java.util.Collections;
+import java.util.concurrent.CountDownLatch;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
+
+        System.setProperty("javax.xml.bind.JAXBContextFactory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
+        System.setProperty("javax.xml.bind.context.factory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
 
         ServiceLocator serviceLocator = ServiceLocator.create();
 
@@ -26,19 +30,31 @@ public class Main {
 
         final EnclaveApplication application = new EnclaveApplication(enclaveResource);
 
-        final ServerConfig serverConfig = services.stream()
+        final Config config = services.stream()
                 .filter(Config.class::isInstance)
                 .map(Config.class::cast)
-                .flatMap(config -> config.getServerConfigs().stream())
                 .findFirst().get();
-        
+
+        final ServerConfig serverConfig = config.getServerConfigs().stream()
+                .findFirst().get();
+
         TesseraServer server = restServerFactory.createServer(serverConfig, Collections.singleton(application));
+
+        CountDownLatch countDown = new CountDownLatch(1);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try{
+                server.stop();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                countDown.countDown();
+            }
+        }));
 
         server.start();
 
-        System.in.read();
-
-        server.stop();
+        countDown.await();
 
     }
 
