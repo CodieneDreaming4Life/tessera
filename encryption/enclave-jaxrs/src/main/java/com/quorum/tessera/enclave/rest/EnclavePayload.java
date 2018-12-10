@@ -12,9 +12,9 @@ public class EnclavePayload implements Serializable {
     private byte[] data;
 
     @XmlMimeType("base64Binary")
-    private byte[] senderKey;
-
-    @XmlMimeType("base64Binary")
+    private byte[]   senderKey;
+    
+     @XmlMimeType("base64Binary")
     private List<byte[]> recipientPublicKeys;
 
     public byte[] getData() {

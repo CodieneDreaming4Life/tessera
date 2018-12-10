@@ -24,7 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class EnclaveApplicationTest {
+public class EnclaveApplicationTest  {
 
     private Enclave enclave;
 
@@ -32,11 +32,11 @@ public class EnclaveApplicationTest {
 
     @Before
     public void setUp() throws Exception {
-
+        
         enclave = mock(Enclave.class);
 
         jersey = Util.create(enclave);
-
+        
         jersey.setUp();
 
     }
@@ -47,6 +47,8 @@ public class EnclaveApplicationTest {
         jersey.tearDown();
 
     }
+
+
 
     @Test
     public void ping() throws Exception {
@@ -116,5 +118,7 @@ public class EnclaveApplicationTest {
         verify(enclave).encryptPayload(any(byte[].class), any(PublicKey.class), anyList());
 
     }
+
+
 
 }
