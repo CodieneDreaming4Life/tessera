@@ -1,5 +1,5 @@
 
-package admin.cmd;
+package util;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,6 @@
 package admin.cmd;
 
+import util.ExecutionResult;
 import com.quorum.tessera.config.Config;
 import com.quorum.tessera.test.Party;
 import com.quorum.tessera.test.util.ElUtil;
@@ -56,8 +57,12 @@ public class StartupSteps implements En {
         Then("node returns error message and exits", () -> {
             assertThat(results).hasSize(1);
             ExecutionResult result = results.get(0);
-            assertThat(result.getExitCode()).isNotEqualTo(0);
-            assertThat(result.getOutput()).hasSize(2);
+            assertThat(result.getExitCode())
+                    .describedAs("Expected exit code is 0")
+                    .isNotEqualTo(0);
+            assertThat(result.getOutput())
+                    .describedAs("exec should have returned 2 lines")
+                    .hasSize(2);
             
             assertThat(result.getOutput())
                     .anyMatch(m -> m.startsWith("Config validation issue: keys.keyData[0].privateKey"));
