@@ -28,20 +28,7 @@
     <bean id="enclaveFactory" class="com.quorum.tessera.encryption.EnclaveFactory" factory-method="create" />
     
     <bean id="enclave" factory-bean="enclaveFactory" factory-method="create">
-        <constructor-arg>
-            <bean factory-bean="keyPairConverter" factory-method="convert">
-                <constructor-arg>
-                    <bean factory-bean="keyConfig" factory-method="getKeyData"/>
-                </constructor-arg>
-            </bean>
-        </constructor-arg>
-        <constructor-arg>
-            <bean class="com.quorum.tessera.encryption.KeyFactory" factory-method="convert">
-                <constructor-arg>
-                    <bean factory-bean="config" factory-method="getAlwaysSendTo" />
-                </constructor-arg>
-            </bean>
-        </constructor-arg>
+        <constructor-arg ref="config" />
     </bean>
 
 </beans>

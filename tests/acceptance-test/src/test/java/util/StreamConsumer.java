@@ -33,24 +33,27 @@ class StreamConsumer implements Callable<Void> {
                 .map(BufferedReader::new)
                 .findAny()
                 .get()) {
+            
             String line = null;
             while ((line = reader.readLine()) != null) {
                 lines.add(line);
                 if (isError) {
-                    LOGGER.error(line);
+                //    LOGGER.error(line);
+                    System.err.println(line);
                 } else {
-                    LOGGER.info(line);
+                  //  LOGGER.info(line);
+                    System.out.println(line);
                 }
             }
             return null;
         }
     }
 
-    public List<String> getErrors() {
-        return isError ? lines : Collections.EMPTY_LIST;
+    public boolean isError() {
+        return isError;
     }
 
     public List<String> getOutput() {
-        return isError ? Collections.EMPTY_LIST : lines;
+        return Collections.unmodifiableList(lines);
     }
 }

@@ -58,7 +58,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>3.0.0-M2</version>
                 <configuration>
                     <skip>false</skip>
                     <rerunFailingTestsCount>3</rerunFailingTestsCount>
@@ -70,19 +70,18 @@
                     <includes>
                         <include>RestSuite</include>
                         <include>GrpcSuite</include>
+<!--                        <include>CucumberRemoteEnclaveIT</include>-->
                     </includes>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>integration-test</id> 
-                        <phase>integration-test</phase>
+                        <id>integration-test</id>
                         <goals>
                             <goal>integration-test</goal>
                         </goals>
                     </execution>
                     <execution>
                         <id>verify</id>
-                        <phase>verify</phase>
                         <goals>
                             <goal>verify</goal>
                         </goals>

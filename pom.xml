@@ -68,7 +68,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <version>3.0.0-M2</version>
                     <configuration>
                         <failIfNoTests>true</failIfNoTests>
                         <systemPropertyVariables>
@@ -84,6 +84,19 @@
                         </dependency>
                     </dependencies>
                 </plugin>
+                
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.0.0-M2</version>  
+                    <configuration>
+                        <systemPropertyVariables>
+                            <javax.xml.bind.JAXBContextFactory>org.eclipse.persistence.jaxb.JAXBContextFactory</javax.xml.bind.JAXBContextFactory>
+                            <javax.xml.bind.context.factory>org.eclipse.persistence.jaxb.JAXBContextFactory</javax.xml.bind.context.factory>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+                
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

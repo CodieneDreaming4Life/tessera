@@ -5,44 +5,7 @@
 
 
     <import resource="classpath:/tessera-enclave-spring.xml" />
-    
-    <bean id="config" class="com.quorum.tessera.config.Config">
-        <property name="serverConfigs">
-            <list>
-                <bean class="com.quorum.tessera.config.ServerConfig">
-                    <property name="app" value="ENCLAVE" />
-                    <property name="bindingAddress" value="http://0.0.0.0:8080" />
-                    <property name="enabled" value="true" />
-                    <property name="communicationType" value="REST" />
-                    <property name="serverSocket">
-                        <bean class="com.quorum.tessera.config.InetServerSocket">
-                            <constructor-arg value="http://localhost" />
-                            <constructor-arg value="8080" />
-                        </bean>
-                    </property>
-                </bean>
-            </list>    
-        </property>
-        
-        <property name="keys">
-            <bean class="com.quorum.tessera.config.KeyConfiguration">
-                <property name="keyData">
-                    <list>
-                        <bean class="com.quorum.tessera.config.keypairs.DirectKeyPair">
-                            <constructor-arg><value><![CDATA[/+UuD63zItL1EbjxkKUljMgG8Z1w0AJ8pNOR4iq2yQc=]]></value></constructor-arg>
-                            <constructor-arg><value><![CDATA[yAWAJjwPqUtNVlqGjSrBmr1/iIkghuOh1803Yzx9jLM=]]></value></constructor-arg>
-                        </bean>
-                    </list>
-                </property>
-            </bean>
-        </property>
-        
-        <property name="alwaysSendTo">
-            <bean class="java.util.ArrayList" />
-        </property>
-        
-    </bean>
-    
+
     <bean class="com.quorum.tessera.enclave.rest.EnclaveResource">
         <constructor-arg ref="enclave" />
     </bean>

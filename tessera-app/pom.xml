@@ -80,6 +80,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.quorum.tessera</groupId>
+            <artifactId>enclave-jaxrs</artifactId>
+            <version>0.8-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>

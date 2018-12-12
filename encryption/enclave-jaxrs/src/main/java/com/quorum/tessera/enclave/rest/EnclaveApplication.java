@@ -16,8 +16,5 @@ public class EnclaveApplication extends Application implements com.quorum.tesser
     public Set<Object> getSingletons() {
         return Collections.singleton(resource);
     }
-    
-    
-    
 
 }

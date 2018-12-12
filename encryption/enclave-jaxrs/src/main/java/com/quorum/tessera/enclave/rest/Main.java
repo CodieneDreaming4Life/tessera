@@ -26,12 +26,13 @@ public class Main {
 
         final EnclaveApplication application = new EnclaveApplication(enclaveResource);
 
-        final ServerConfig serverConfig = services.stream()
+        Config config = services.stream()
                 .filter(Config.class::isInstance)
                 .map(Config.class::cast)
-                .flatMap(config -> config.getServerConfigs().stream())
-                .findFirst().get();
-        
+                .findAny().get();
+
+        final ServerConfig serverConfig = config.getServerConfigs().iterator().next();
+
         TesseraServer server = restServerFactory.createServer(serverConfig, Collections.singleton(application));
 
         server.start();
