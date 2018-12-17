@@ -1,13 +1,24 @@
 package enclave;
 
 import cucumber.api.java8.En;
+import static org.assertj.core.api.Assertions.assertThat;
+import util.CmdUtils;
+import util.Environment;
+import util.ExecutionResult;
 
 public class StartEnclave implements En {
 
     public StartEnclave() {
         Given("enclave is running", () -> {
-            // Write code here that turns the phrase above into concrete actions
-            throw new cucumber.api.PendingException();
+            
+            String enclaveJarPath = Environment.INSTANCE.getEnclaveJarPath();
+            
+            String configFilePath = getClass().getResource("/enclave/enclave-config.xml").getFile();
+            
+            ExecutionResult result = CmdUtils.executeArgs("java","-jar",enclaveJarPath,"-configfile",configFilePath);
+            
+            assertThat(result).isNotNull();
+
         });
     }
 

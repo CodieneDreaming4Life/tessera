@@ -1,12 +1,13 @@
 package enclave;
 
 import cucumber.api.java8.En;
+import static org.junit.Assert.*;
 
 public class SendTransaction implements En {
 
     public SendTransaction() {
         When("quorum node invokes send", () -> {
-            // Write code here that turns the phrase above into concrete actions
+            fail();
             throw new cucumber.api.PendingException();
         });
     }

@@ -55,7 +55,16 @@ public class ProcessManager {
         configs.put("D", getClass().getResource(String.format(pathTemplate, "4")));
         configs.put("E", getClass().getResource(String.format(pathTemplate, "-whitelist")));
         this.configFiles = Collections.unmodifiableMap(configs);
+        
+        
     }
+
+    public ProcessManager(CommunicationType communicationType,Map<String, URL> configFiles) {
+        this.configFiles = configFiles;
+        this.communicationType = communicationType;
+    }
+    
+    
 
     public String findJarFilePath() {
         return Objects.requireNonNull(System.getProperty("application.jar", null),
@@ -240,6 +249,9 @@ public class ProcessManager {
         int exitCode = process.waitFor();
     }
 
+    
+    
+    
 
     public static void main(String[] args) throws Exception {
         System.setProperty("application.jar", "/Users/mark/Projects/tessera/tessera-app/target/tessera-app-0.8-SNAPSHOT-app.jar");
