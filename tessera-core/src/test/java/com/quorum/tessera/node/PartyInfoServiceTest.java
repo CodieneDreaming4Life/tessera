@@ -40,7 +40,7 @@ public class PartyInfoServiceTest {
 
     private Enclave enclave;
 
-    private PartyInfoService partyInfoService;
+    private PartyInfoServiceImpl partyInfoService;
 
     @Before
     public void onSetUp() throws URISyntaxException {
@@ -63,6 +63,7 @@ public class PartyInfoServiceTest {
         doReturn(ourKeys).when(enclave).getPublicKeys();
 
         this.partyInfoService = new PartyInfoServiceImpl(partyInfoStore, configService, enclave);
+        this.partyInfoService.onConstruct();
     }
 
     @After
