@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
+import javax.annotation.PostConstruct;
+//import javax.annotation.PostConstruct;
 
 public class PartyInfoServiceImpl implements PartyInfoService {
 
@@ -23,32 +25,49 @@ public class PartyInfoServiceImpl implements PartyInfoService {
 
     private final ConfigService configService;
 
+    private final Enclave enclave;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PartyInfoServiceImpl.class);
 
     public PartyInfoServiceImpl(final PartyInfoStore partyInfoStore,
-                                final ConfigService configService,
-                                final Enclave enclave) {
+            final ConfigService configService,
+            final Enclave enclave) {
         this.partyInfoStore = Objects.requireNonNull(partyInfoStore);
         this.configService = Objects.requireNonNull(configService);
+        this.enclave = Objects.requireNonNull(enclave);
+
+    }
+
+    @PostConstruct
+    public void onConstruct() {
 
         final String advertisedUrl = configService.getServerUri() + "/";
 
+        LOGGER.info("advertisedUrl {}", advertisedUrl);
 
         final Set<Party> initialParties = configService
-            .getPeers()
-            .stream()
-            .map(Peer::getUrl)
-            .map(Party::new)
-            .collect(toSet());
+                .getPeers()
+                .stream()
+                .map(Peer::getUrl)
+                .map(Party::new)
+                .collect(toSet());
+
+        LOGGER.info("initialParties {}", initialParties);
 
         final Set<Recipient> ourKeys = enclave
-            .getPublicKeys()
-            .stream()
-            .map(key -> PublicKey.from(key.getKeyBytes()))
-            .map(key -> new Recipient(key, advertisedUrl))
-            .collect(toSet());
+                .getPublicKeys()
+                .stream()
+                .map(key -> PublicKey.from(key.getKeyBytes()))
+                .map(key -> new Recipient(key, advertisedUrl))
+                .collect(toSet());
 
+        LOGGER.info("ourKeys {}", ourKeys);
+
+        try {
         partyInfoStore.store(new PartyInfo(advertisedUrl, ourKeys, initialParties));
+        } catch(RuntimeException ex) {
+            LOGGER.error("EJETE",ex);
+        }
 
     }
 
@@ -67,12 +86,11 @@ public class PartyInfoServiceImpl implements PartyInfoService {
         }
 
         //auto-discovery is off
-
         final Set<String> peerUrls = configService
-            .getPeers()
-            .stream()
-            .map(Peer::getUrl)
-            .collect(Collectors.toSet());
+                .getPeers()
+                .stream()
+                .map(Peer::getUrl)
+                .collect(Collectors.toSet());
 
         LOGGER.debug("Known peers: {}", peerUrls);
 
@@ -88,10 +106,10 @@ public class PartyInfoServiceImpl implements PartyInfoService {
 
         //filter out all keys that aren't from that node
         final Set<Recipient> knownRecipients = partyInfo
-            .getRecipients()
-            .stream()
-            .filter(recipient -> Objects.equals(recipient.getUrl(), incomingUrl))
-            .collect(Collectors.toSet());
+                .getRecipients()
+                .stream()
+                .filter(recipient -> Objects.equals(recipient.getUrl(), incomingUrl))
+                .collect(Collectors.toSet());
 
         //TODO: instead of adding the peers every time, if a new peer is added at runtime then this should be added separately
         final Set<Party> parties = peerUrls.stream().map(Party::new).collect(toSet());
@@ -105,12 +123,12 @@ public class PartyInfoServiceImpl implements PartyInfoService {
     public String getURLFromRecipientKey(final PublicKey key) {
 
         final Recipient retrievedRecipientFromStore = partyInfoStore
-            .getPartyInfo()
-            .getRecipients()
-            .stream()
-            .filter(recipient -> key.equals(recipient.getKey()))
-            .findAny()
-            .orElseThrow(() -> new KeyNotFoundException("Recipient not found for key: " + key.encodeToBase64()));
+                .getPartyInfo()
+                .getRecipients()
+                .stream()
+                .filter(recipient -> key.equals(recipient.getKey()))
+                .findAny()
+                .orElseThrow(() -> new KeyNotFoundException("Recipient not found for key: " + key.encodeToBase64()));
 
         return retrievedRecipientFromStore.getUrl();
     }

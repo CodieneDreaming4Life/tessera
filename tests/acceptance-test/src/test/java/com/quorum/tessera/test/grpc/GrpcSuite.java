@@ -17,16 +17,18 @@ import org.junit.runners.Suite;
 })
 public class GrpcSuite {
     
-    private static final ProcessManager PROCESS_MANAGER = new ProcessManager(CommunicationType.GRPC);
+    private static final ProcessManager PROCESS_MANAGER = ProcessManager.Builder.create()
+            .withCommunicationType(CommunicationType.GRPC)
+            .build();
     
     @BeforeClass
     public static void onSetup() throws Exception {
         PROCESS_MANAGER.startNodes();
     }
-
+    
     @AfterClass
     public static void onTearDown() throws Exception {
         PROCESS_MANAGER.stopNodes();
     }
-
+    
 }

@@ -11,7 +11,7 @@ public enum Environment {
     }
     
     public String getEnclaveJarPath() {
-        return System.getProperty("enclave.jar", "../..encryption/enclave-jaxrs/target/enclave-jaxrs-0.8-SNAPSHOT-app.jar");
+        return System.getProperty("enclave.jar", "../../encryption/enclave-jaxrs/target/enclave-jaxrs-0.8-SNAPSHOT-app.jar");
     }
     
 }

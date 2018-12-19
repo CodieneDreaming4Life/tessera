@@ -28,7 +28,9 @@ import org.junit.runners.Suite;
 })
 public class RestSuite {
 
-    private static final ProcessManager PROCESS_MANAGER = new ProcessManager(CommunicationType.REST);
+    private static final ProcessManager PROCESS_MANAGER = ProcessManager.Builder.create()
+            .withCommunicationType(CommunicationType.REST)
+            .build();
 
     @BeforeClass
     public static void onSetup() throws Exception {
@@ -38,8 +40,6 @@ public class RestSuite {
     @AfterClass
     public static void onTearDown() throws Exception {
         PROCESS_MANAGER.stopNodes();
-
     }
-    
-    
+
 }

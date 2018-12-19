@@ -1,8 +1,6 @@
 package com.quorum.tessera;
 
-import com.quorum.tessera.config.CommunicationType;
 import com.quorum.tessera.config.Config;
-import com.quorum.tessera.config.ServerConfig;
 import com.quorum.tessera.config.cli.CliDelegate;
 import com.quorum.tessera.config.cli.CliResult;
 import com.quorum.tessera.server.TesseraServer;
@@ -16,6 +14,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 /**
  * The main entry point for the application. This just starts up the application
@@ -29,8 +28,8 @@ public class Launcher {
 
         System.setProperty("javax.xml.bind.JAXBContextFactory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
         System.setProperty("javax.xml.bind.context.factory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
-        
-        try {
+
+        try{
             final CliResult cliResult = CliDelegate.instance().execute(args);
 
             if (cliResult.isSuppressStartup()) {
@@ -89,38 +88,21 @@ public class Launcher {
 
         Set<Object> services = serviceLocator.getServices("tessera-spring.xml");
 
-        TesseraServerFactory restServerFactory = TesseraServerFactory.create(CommunicationType.REST);
-
-        TesseraServerFactory grpcServerFactory = TesseraServerFactory.create(CommunicationType.GRPC);
-
-        TesseraServerFactory unixSocketServerFactory = TesseraServerFactory.create(CommunicationType.UNIX_SOCKET);
-
-        //TODO - we should only need one netty factory that is able to deal with any type of ServerConfig
-        List<TesseraServer> servers = new ArrayList<>();
-        for(ServerConfig serverConfig : config.getServerConfigs()){
-            TesseraServer tesseraServer = null;
-            switch (serverConfig.getCommunicationType()){
-                case GRPC:
-                    tesseraServer = grpcServerFactory.createServer(serverConfig, services);
-                    break;
-                case REST:
-                    tesseraServer = restServerFactory.createServer(serverConfig, services);
-                    break;
-                case UNIX_SOCKET:
-                    tesseraServer = unixSocketServerFactory.createServer(serverConfig, services);
-                    break;
-            }
-            if (null != tesseraServer) {
-                servers.add(tesseraServer);
-            }
-        }
+        final List<TesseraServer> servers = config.getServerConfigs().stream()
+                .map(sc -> TesseraServerFactory
+                                .create(sc.getCommunicationType())
+                                .createServer(sc, services)
+                )
+                .collect(Collectors.toList());
 
         CountDownLatch countDown = new CountDownLatch(1);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                for (TesseraServer ts : servers){
+            try{
+                for (TesseraServer ts : servers) {
+                    LOGGER.info("Stopping {}",ts);
                     ts.stop();
+                    LOGGER.info("Stopped {}",ts);
                 }
             } catch (Exception ex) {
                 LOGGER.error(null, ex);
@@ -129,8 +111,10 @@ public class Launcher {
             }
         }));
 
-        for (TesseraServer ts : servers){
+        for (TesseraServer ts : servers) {
+            LOGGER.info("Starting {}",ts);
             ts.start();
+            LOGGER.info("Started {}",ts);
         }
 
         countDown.await();

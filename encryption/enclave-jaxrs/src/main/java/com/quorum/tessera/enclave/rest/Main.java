@@ -13,6 +13,9 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
+        System.setProperty("javax.xml.bind.JAXBContextFactory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
+        System.setProperty("javax.xml.bind.context.factory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
+
         ServiceLocator serviceLocator = ServiceLocator.create();
 
         Set<Object> services = serviceLocator.getServices("tessera-enclave-jaxrs-spring.xml");

@@ -2,9 +2,9 @@ package enclave;
 
 import cucumber.api.java8.En;
 import static org.assertj.core.api.Assertions.assertThat;
-import util.CmdUtils;
-import util.Environment;
 import util.ExecutionResult;
+import util.Environment;
+import util.CmdUtils;
 
 public class StartEnclave implements En {
 

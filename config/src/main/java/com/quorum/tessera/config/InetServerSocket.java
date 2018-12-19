@@ -53,4 +53,9 @@ public class InetServerSocket extends ServerSocket{
         }
     }
 
+    @Override
+    public String toString() {
+        return "InetServerSocket{" + "hostName=" + hostName + ", port=" + port + '}';
+    }
+
 }

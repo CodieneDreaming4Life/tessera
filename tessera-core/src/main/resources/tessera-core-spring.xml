@@ -77,12 +77,6 @@
     <bean id="partyInfoParser" class="com.quorum.tessera.node.PartyInfoParser" factory-method="create"/>
 
 
-
-
-    <bean id="cliDelegate" class="com.quorum.tessera.config.cli.CliDelegate" factory-method="instance"/>
-
-    <bean id="config" factory-bean="cliDelegate" factory-method="getConfig"/>
-
     <bean id="configService" class="com.quorum.tessera.core.config.ConfigServiceImpl">
         <constructor-arg ref="config" />
         <constructor-arg>

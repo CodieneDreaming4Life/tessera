@@ -44,7 +44,7 @@ public class ProcessManager {
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public ProcessManager(CommunicationType communicationType) {
+    private ProcessManager(CommunicationType communicationType) {
         this.communicationType = Objects.requireNonNull(communicationType);
 
         String pathTemplate = "/" + communicationType.name().toLowerCase() + "/config%s.json";
@@ -55,16 +55,67 @@ public class ProcessManager {
         configs.put("D", getClass().getResource(String.format(pathTemplate, "4")));
         configs.put("E", getClass().getResource(String.format(pathTemplate, "-whitelist")));
         this.configFiles = Collections.unmodifiableMap(configs);
-        
-        
+
     }
 
-    public ProcessManager(CommunicationType communicationType,Map<String, URL> configFiles) {
+    private ProcessManager(CommunicationType communicationType, Map<String, URL> configFiles) {
         this.configFiles = configFiles;
         this.communicationType = communicationType;
     }
-    
-    
+
+    public static class Builder {
+
+        private Map<String, URL> configFiles = new HashMap<>();
+
+        private CommunicationType communicationType;
+
+        private Builder() {
+        }
+
+        public static Builder create() {
+            return new Builder();
+        }
+
+        public Builder withCommunicationType(CommunicationType communicationType) {
+            this.communicationType = communicationType;
+            return this;
+        }
+
+        public Builder withConfigFile(String name, URL url) {
+            this.configFiles.put(name, url);
+            return this;
+        }
+
+        public Builder withDefaultConfigFiles() {
+            String pathTemplate = "/" + communicationType.name().toLowerCase() + "/config%s.json";
+            final Map<String, URL> configs = new HashMap<>();
+            configs.put("A", getClass().getResource(String.format(pathTemplate, "1")));
+            configs.put("B", getClass().getResource(String.format(pathTemplate, "2")));
+            configs.put("C", getClass().getResource(String.format(pathTemplate, "3")));
+            configs.put("D", getClass().getResource(String.format(pathTemplate, "4")));
+            configs.put("E", getClass().getResource(String.format(pathTemplate, "-whitelist")));
+            this.configFiles = configs;
+            return this;
+        }
+
+        public ProcessManager build() {
+
+            Objects.requireNonNull(communicationType);
+            Objects.requireNonNull(configFiles);
+            if(configFiles.isEmpty()) {
+                throw new IllegalStateException("No config files defined");
+            }
+
+            return new ProcessManager(communicationType, configFiles);
+
+        }
+
+        public Builder withConfigFiles(Map<String, URL> configs) {
+            this.configFiles = configs;
+            return this;
+        }
+
+    }
 
     public String findJarFilePath() {
         return Objects.requireNonNull(System.getProperty("application.jar", null),
@@ -129,21 +180,23 @@ public class ProcessManager {
                 "-jdbc.autoCreateTables", "true"
         );
         System.out.println(String.join(" ", args));
-
+        
+        System.out.println(configFile);
+        
         ProcessBuilder processBuilder = new ProcessBuilder(args);
-        processBuilder.redirectErrorStream(true);
+        processBuilder.redirectErrorStream(false);
         Process process = processBuilder.start();
 
         executorService.submit(() -> {
 
-            try(BufferedReader reader = Stream.of(process.getInputStream())
+            try (BufferedReader reader = Stream.of(process.getInputStream())
                     .map(InputStreamReader::new)
                     .map(BufferedReader::new)
                     .findAny().get()) {
 
                 String line = null;
                 while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
+                    System.out.println("STDOUT "+ line);
                 }
 
             } catch (IOException ex) {
@@ -151,6 +204,24 @@ public class ProcessManager {
             }
         });
 
+        executorService.submit(() -> {
+
+            try (BufferedReader reader = Stream.of(process.getErrorStream())
+                    .map(InputStreamReader::new)
+                    .map(BufferedReader::new)
+                    .findAny().get()) {
+
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    System.err.println("STDERR "+ line);
+                }
+
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        });
+        
+        
         final String nodeId = nodeAlias;
 
         final Config config = JaxbUtil.unmarshal(configFile.openStream(), Config.class);
@@ -182,7 +253,7 @@ public class ProcessManager {
                         return;
                     } catch (Exception ex) {
                         try {
-                            TimeUnit.MILLISECONDS.sleep(200L);
+                            TimeUnit.MILLISECONDS.sleep(500L);
                         } catch (InterruptedException ex1) {
                         }
                     }
@@ -195,6 +266,7 @@ public class ProcessManager {
 
                 while (true) {
                     try {
+                        System.out.println("Check "+ bindingUrl);
                         HttpURLConnection conn = (HttpURLConnection) bindingUrl.openConnection();
                         conn.connect();
 
@@ -203,8 +275,9 @@ public class ProcessManager {
                         startUpLatch.countDown();
                         return;
                     } catch (IOException ex) {
+                         System.out.println("Check failed "+ bindingUrl + " "+ ex.getMessage());
                         try {
-                            TimeUnit.MILLISECONDS.sleep(200L);
+                            TimeUnit.MILLISECONDS.sleep(500L);
                         } catch (InterruptedException ex1) {
                         }
                     }
@@ -230,7 +303,7 @@ public class ProcessManager {
             }
         });
 
-        startUpLatch.await(30, TimeUnit.SECONDS);
+        startUpLatch.await(2, TimeUnit.MINUTES);
 
     }
 
@@ -249,16 +322,16 @@ public class ProcessManager {
         int exitCode = process.waitFor();
     }
 
-    
-    
-    
-
     public static void main(String[] args) throws Exception {
         System.setProperty("application.jar", "/Users/mark/Projects/tessera/tessera-app/target/tessera-app-0.8-SNAPSHOT-app.jar");
         System.setProperty("javax.xml.bind.JAXBContextFactory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
         System.setProperty("javax.xml.bind.context.factory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
+
+        ProcessManager pm = ProcessManager.Builder.create()
+                .withCommunicationType(CommunicationType.REST)
+                .withDefaultConfigFiles()
+                .build();
         
-        ProcessManager pm = new ProcessManager(CommunicationType.REST);
         pm.startNodes();
 
         System.in.read();

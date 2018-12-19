@@ -12,16 +12,7 @@
       "serverSocket" : {
          "type" : "INET",
          "hostName" : "http://localhost",
-         "port" : 18080
-      },
-      "communicationType" : "REST"
-   }, {
-      "app" : "P2P",
-      "enabled" : true,
-      "serverSocket" : {
-         "type" : "INET",
-         "hostName" : "http://localhost",
-         "port" : 8080
+         "port" : 18081
       },
       "communicationType" : "REST"
    },{
@@ -33,10 +24,19 @@
          "port" : 28080
       },
       "communicationType" : "REST"
+   }, {
+      "app" : "P2P",
+      "enabled" : true,
+      "serverSocket" : {
+         "type" : "INET",
+         "hostName" : "http://localhost",
+         "port" : 8083
+      },
+      "communicationType" : "REST"
    } ],
     "peer": [
         {
-            "url": "http://localhost:8081/"
+            "url": "http://localhost:8082/"
         }
     ],
     "keys": {
