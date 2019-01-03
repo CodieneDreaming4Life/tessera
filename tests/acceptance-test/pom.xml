@@ -76,8 +76,8 @@
                         <javax.xml.bind.context.factory>org.eclipse.persistence.jaxb.JAXBContextFactory</javax.xml.bind.context.factory>
                     </systemPropertyVariables>
                     <includes>
-<!--                        <include>RestSuite</include>
-                        <include>GrpcSuite</include>-->
+                        <include>RestSuite</include>
+                        <include>GrpcSuite</include>
                         <include>CucumberRemoteEnclaveIT</include>
                     </includes>
                 </configuration>

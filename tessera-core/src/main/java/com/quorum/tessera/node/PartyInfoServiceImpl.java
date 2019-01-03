@@ -63,11 +63,7 @@ public class PartyInfoServiceImpl implements PartyInfoService {
 
         LOGGER.info("ourKeys {}", ourKeys);
 
-        try {
         partyInfoStore.store(new PartyInfo(advertisedUrl, ourKeys, initialParties));
-        } catch(RuntimeException ex) {
-            LOGGER.error("EJETE",ex);
-        }
 
     }
 

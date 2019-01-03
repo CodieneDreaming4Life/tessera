@@ -10,15 +10,15 @@ import org.junit.Test;
 
 public class OpenPojoTest {
 
-     @Test
+    @Test
     public void executeOpenPojoValidations() {
 
         final Validator pojoValidator = ValidatorBuilder
-            .create()
-            .with(new GetterMustExistRule())
-            .with(new GetterTester())
-            .with(new SetterTester())
-            .build();
+                .create()
+                .with(new GetterMustExistRule())
+                .with(new GetterTester())
+                .with(new SetterTester())
+                .build();
 
         final PojoClassFilter[] filters = new PojoClassFilter[]{
             pc -> !pc.getClazz().isAssignableFrom(ObjectFactory.class),

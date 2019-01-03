@@ -13,6 +13,7 @@ public class InetServerSocketTest {
     @Before
     public void setUp() {
         serverSocket = new InetServerSocket("localhost", 1234);
+        assertThat(serverSocket.toString()).isNotNull();
     }
 
     @Test
