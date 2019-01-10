@@ -32,9 +32,9 @@ public class PartyInfoServiceImpl implements PartyInfoService {
     public PartyInfoServiceImpl(final PartyInfoStore partyInfoStore,
             final ConfigService configService,
             final Enclave enclave) {
-        this.partyInfoStore = Objects.requireNonNull(partyInfoStore);
-        this.configService = Objects.requireNonNull(configService);
-        this.enclave = Objects.requireNonNull(enclave);
+        this.partyInfoStore = Objects.requireNonNull(partyInfoStore,"Party info store is requitred");
+        this.configService = Objects.requireNonNull(configService,"Config service is requitred");
+        this.enclave = Objects.requireNonNull(enclave,"Enclave service is requitred");
 
     }
 

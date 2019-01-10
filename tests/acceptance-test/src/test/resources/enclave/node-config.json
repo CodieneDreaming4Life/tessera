@@ -12,7 +12,7 @@
       "serverSocket" : {
          "type" : "INET",
          "hostName" : "http://localhost",
-         "port" : 18081
+         "port" : 18080
       },
       "communicationType" : "REST"
    },{
@@ -30,13 +30,13 @@
       "serverSocket" : {
          "type" : "INET",
          "hostName" : "http://localhost",
-         "port" : 8083
+         "port" : 8080
       },
       "communicationType" : "REST"
    } ],
     "peer": [
         {
-            "url": "http://localhost:8082/"
+              "url": "http://localhost:8081/"
         }
     ],
     "keys": {

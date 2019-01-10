@@ -86,7 +86,8 @@ public class ProcessManager {
             return this;
         }
 
-        public Builder withDefaultConfigFiles() {
+        public Builder withDefaultConfigFiles(CommunicationType communicationType) {
+            this.communicationType = communicationType;
             String pathTemplate = "/" + communicationType.name().toLowerCase() + "/config%s.json";
             final Map<String, URL> configs = new HashMap<>();
             configs.put("A", getClass().getResource(String.format(pathTemplate, "1")));
@@ -97,6 +98,7 @@ public class ProcessManager {
             this.configFiles = configs;
             return this;
         }
+
 
         public ProcessManager build() {
 
@@ -275,7 +277,7 @@ public class ProcessManager {
                         startUpLatch.countDown();
                         return;
                     } catch (IOException ex) {
-                         System.out.println("Check failed "+ bindingUrl + " "+ ex.getMessage());
+                        System.out.println("Check failed "+ bindingUrl + " "+ ex.getMessage());
                         try {
                             TimeUnit.MILLISECONDS.sleep(500L);
                         } catch (InterruptedException ex1) {
@@ -323,13 +325,12 @@ public class ProcessManager {
     }
 
     public static void main(String[] args) throws Exception {
-        System.setProperty("application.jar", "/Users/mark/Projects/tessera/tessera-app/target/tessera-app-0.8-SNAPSHOT-app.jar");
+        System.setProperty("application.jar", "~/Projects/tessera/tessera-app/target/tessera-app-0.8-SNAPSHOT-app.jar");
         System.setProperty("javax.xml.bind.JAXBContextFactory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
         System.setProperty("javax.xml.bind.context.factory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
 
         ProcessManager pm = ProcessManager.Builder.create()
-                .withCommunicationType(CommunicationType.REST)
-                .withDefaultConfigFiles()
+                .withDefaultConfigFiles(CommunicationType.REST)
                 .build();
         
         pm.startNodes();

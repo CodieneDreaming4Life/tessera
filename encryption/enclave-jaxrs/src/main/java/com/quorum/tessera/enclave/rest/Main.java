@@ -3,21 +3,27 @@ package com.quorum.tessera.enclave.rest;
 import com.quorum.tessera.config.CommunicationType;
 import com.quorum.tessera.config.Config;
 import com.quorum.tessera.config.ServerConfig;
+import com.quorum.tessera.config.cli.CliDelegate;
 import com.quorum.tessera.server.TesseraServer;
 import com.quorum.tessera.service.locator.ServiceLocator;
 import java.util.Set;
 import com.quorum.tessera.server.TesseraServerFactory;
 import java.util.Collections;
+import java.util.concurrent.CountDownLatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    
     public static void main(String[] args) throws Exception {
 
         System.setProperty("javax.xml.bind.JAXBContextFactory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
         System.setProperty("javax.xml.bind.context.factory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
-
+        CliDelegate.INSTANCE.execute(args);
         ServiceLocator serviceLocator = ServiceLocator.create();
-
+ 
         Set<Object> services = serviceLocator.getServices("tessera-enclave-jaxrs-spring.xml");
 
         TesseraServerFactory restServerFactory = TesseraServerFactory.create(CommunicationType.REST);
@@ -39,10 +45,22 @@ public class Main {
         TesseraServer server = restServerFactory.createServer(serverConfig, Collections.singleton(application));
 
         server.start();
+        
+        CountDownLatch latch = new CountDownLatch(1);
+        
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            
+            try{
+                server.stop();
+            } catch (Exception ex) {
+                LOGGER.error(null, ex);
+            } finally {
+                
+            }
+        }));
+        
+        latch.await();
 
-        System.in.read();
-
-        server.stop();
 
     }
 

@@ -29,12 +29,12 @@ import org.junit.runners.Suite;
 public class RestSuite {
 
     private static final ProcessManager PROCESS_MANAGER = ProcessManager.Builder.create()
-            .withCommunicationType(CommunicationType.REST)
+            .withDefaultConfigFiles(CommunicationType.REST)
             .build();
 
     @BeforeClass
     public static void onSetup() throws Exception {
-        PROCESS_MANAGER.startNodes();
+       PROCESS_MANAGER.startNodes();
     }
 
     @AfterClass

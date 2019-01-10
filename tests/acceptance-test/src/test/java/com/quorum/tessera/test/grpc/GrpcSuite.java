@@ -18,7 +18,7 @@ import org.junit.runners.Suite;
 public class GrpcSuite {
     
     private static final ProcessManager PROCESS_MANAGER = ProcessManager.Builder.create()
-            .withCommunicationType(CommunicationType.GRPC)
+            .withDefaultConfigFiles(CommunicationType.GRPC)
             .build();
     
     @BeforeClass

@@ -4,6 +4,7 @@ import com.quorum.tessera.config.CommunicationType;
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import java.net.URL;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.junit.AfterClass;
@@ -38,24 +39,25 @@ public class CucumberRemoteEnclaveIT {
 
         LOGGER.info("Starting");
 
-        processManager.start("Y");
-        
-//        executorService.submit(() -> {
-//            try {
-//                processManager.start("Y");
-//            } catch (Exception ex) {
-//                throw new RuntimeException(ex);
-//            }
-//        });
+        CountDownLatch latch = new CountDownLatch(2);
 
-//        executorService.submit(() -> {
-//            try {
-//                processManager.start("X");
-//            } catch (Exception ex) {
-//                throw new RuntimeException(ex);
-//            }
-//        });
-
+        executorService.submit(() -> {
+            try {
+                processManager.start("Y");
+                latch.countDown();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            } 
+        });
+        executorService.submit(() -> {
+            try {
+                processManager.start("X");
+                latch.countDown();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        latch.await();
         LOGGER.info("Started");
 
     }

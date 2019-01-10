@@ -3,7 +3,7 @@
    <serverConfigs>
       <app>ENCLAVE</app>
       <enabled>true</enabled>
-      <serverSocket type="INET">
+      <serverSocket xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="INET">
          <hostName>http://localhost</hostName>
          <port>28080</port>
       </serverSocket>
